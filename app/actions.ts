@@ -1,3 +1,10 @@
+import { neon } from "@neondatabase/serverless";
+
+export async function getSqlVersion() {
+  const sql = neon(process.env.DATABASE_URL!);
+  const response = await sql`SELECT version()`;
+  return response[0].version;
+}
 
 export async function queryRecipes(query: string, category: string) {
   // needs to be db call
