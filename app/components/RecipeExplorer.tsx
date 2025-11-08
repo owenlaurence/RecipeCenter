@@ -1,6 +1,6 @@
 // components/RecipeExplorer.tsx
 "use client";
-import { useState, useTransition, use } from "react";
+import { useState, useTransition, use, useEffect } from "react";
 import { queryRecipes } from "../actions";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -57,12 +57,15 @@ function RecipeSkeleton() {
 }
 
 export function RecipeExplorer() {
-  const [recipesPromise, setRecipesPromise] = useState<Promise<Recipe[]>>(
-    queryRecipes("", "All")
-  );
+  const [recipesPromise, setRecipesPromise] = useState<Promise<Recipe[]> | null>(null);
   const [category, setCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  // Initialize the recipes promise after mount
+  useEffect(() => {
+    setRecipesPromise(queryRecipes("", "All"));
+  }, []);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
@@ -113,12 +116,13 @@ export function RecipeExplorer() {
       )}
 
       {/* Suspense Boundary */}
-      <Suspense key={recipesPromise.toString()} fallback={<RecipeSkeleton />}>
-        <RecipeList recipesPromise={recipesPromise} />
-      </Suspense>
+      {recipesPromise ? (
+        <Suspense key={recipesPromise.toString()} fallback={<RecipeSkeleton />}>
+          <RecipeList recipesPromise={recipesPromise} />
+        </Suspense>
+      ) : (
+        <RecipeSkeleton />
+      )}
     </div>
   );
 }
-
-// Don't forget to import Suspense at the top
-// import { Suspense } from "react";
