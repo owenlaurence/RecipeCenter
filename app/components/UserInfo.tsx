@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "./AuthProvider";
 import { Button } from "./ui/button"
 import { Plus } from "lucide-react"
+import Link from "next/link";
 
 export default function UserInfo() {
   const user = useAuth();
@@ -13,9 +14,9 @@ export default function UserInfo() {
 
   return (
 
-    <Button as="a" >
+    <Link href="/auth">
       <Plus className="w-4 h-4 mr-2" />
       Share Recipe
-    </Button>
+    </Link>
   )
 }

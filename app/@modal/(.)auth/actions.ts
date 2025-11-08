@@ -1,7 +1,7 @@
 "use server"
-import { authClient } from "../components/AuthClient";
+import { authClient } from "@/app/components/AuthClient";
 import { User } from "./page";
-import { auth } from "../auth";
+import { auth } from "@/app/auth";
 import { cookies } from "next/headers";
 
 export async function addUser(user: User) {

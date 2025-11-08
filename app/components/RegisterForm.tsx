@@ -1,6 +1,6 @@
 "use client"
 import { FormEvent } from "react"
-import { addUser  } from "../register/actions"
+import { addUser } from "../@modal/(.)auth/actions"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"

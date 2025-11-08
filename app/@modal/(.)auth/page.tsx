@@ -7,9 +7,9 @@ import { Label } from     "@/app/components/ui/label";
 import { Separator } from "@/app/components/ui/separator";
 import { handleSocialLogin } from "./actions";
 
-import { ChefHat, Chrome, Github } from "lucide-react";
-import RegisterForm from "../components/RegisterForm";
-import LoginForm from "../components/LoginForm";
+import { ChefHat } from "lucide-react";
+import RegisterForm from "@/app/components/RegisterForm";
+import LoginForm from "@/app/components/LoginForm";
 
 
 export interface User {

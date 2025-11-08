@@ -1,6 +1,5 @@
 "use server"
 import { neon } from "@neondatabase/serverless";
-import { User } from "./register/page";
 import { auth } from "./auth";
 
 export async function getSqlVersion() {
