@@ -1,3 +1,4 @@
+"use client"
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 import * as React from "react";
@@ -38,6 +39,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   as?: keyof JSX.IntrinsicElements; // optional tag override (e.g. "a", "div")
+  action? : Promise<void>
 }
 
 export function Button({
@@ -49,6 +51,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <Comp
+      onClick={() => props.action}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...(props as any)} 
