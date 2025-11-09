@@ -6,7 +6,7 @@ import { Plus } from "lucide-react"
 import Link from "next/link";
 
 export default function UserInfo() {
-  const user = useAuth();
+  const { user } = useAuth();
   useEffect(() => {
     console.log(user)
   }, [user])
@@ -14,9 +14,17 @@ export default function UserInfo() {
 
   return (
 
-    <Link href="/auth">
-      <Plus className="w-4 h-4 mr-2" />
-      Share Recipe
-    </Link>
+    <>
+      {user
+        ? <div>
+          <p className="text-gray-600 mt-2">{user.name}</p>
+        </div>
+        : <Link href="/auth">
+          <Plus className="w-4 h-4 mr-2" />
+          Share Recipe
+        </Link>
+
+      }
+    </>
   )
 }

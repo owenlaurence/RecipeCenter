@@ -26,6 +26,7 @@ export default function RegisterForm() {
       email: email,
       pass: password,
     }).then((res) => {
+      debugger;
       if(res && res.user) {
         router.push("/")
       }

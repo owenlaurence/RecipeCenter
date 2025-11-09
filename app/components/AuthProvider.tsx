@@ -2,26 +2,35 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { Session, User } from 'better-auth';
+import { AuthenticationResponse } from '../actions';
 
-export type BASession = { session: Session; user: User };
 
 interface AuthContextType {
-  session: BASession | null;
-  setSession: (session: BASession | null) => void;
+  session: Session | undefined
+  setSession: (session: Session) => void
+
+  user: User | undefined
+  setUser: (user: User) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
   children: ReactNode;
-  initialSession: BASession | null;
+  initialSession: AuthenticationResponse | undefined;
 }
 
 export function AuthProvider({ children, initialSession }: AuthProviderProps) {
-  const [session, setSession] = useState<BASession | null>(initialSession);
-  
+  const [session, setSession] = useState<Session | undefined>(initialSession?.session);
+  const [user, setUser] = useState<User | undefined>(initialSession?.user);
+
   return (
-    <AuthContext.Provider value={{ session, setSession }}>
+    <AuthContext.Provider value={{
+      session: session,
+      setSession: setSession,
+      user: user,
+      setUser: setUser
+    }}>
       {children}
     </AuthContext.Provider>
   );

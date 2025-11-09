@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { AuthProvider, BASession } from "./components/AuthProvider";
-import { getAuthenticatedUser } from "./actions";
+import { AuthProvider } from "./components/AuthProvider";
+import { AuthenticationResponse, getAuthenticatedUser } from "./actions";
 
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
-  const session: BASession | null = await getAuthenticatedUser()
+  const session: AuthenticationResponse | undefined  = await getAuthenticatedUser()
 
   return (
     <html lang="en">

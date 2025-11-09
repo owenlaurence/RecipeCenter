@@ -1,6 +1,8 @@
 "use server"
 import { neon } from "@neondatabase/serverless";
 import { auth } from "./auth";
+import { Session, User } from "better-auth";
+import { headers } from "next/headers";
 
 export async function getSqlVersion() {
   const sql = neon(process.env.DATABASE_URL!);
@@ -24,17 +26,34 @@ export async function queryRecipes(query: string, category: string) {
 }
 
 
+export type AuthenticationResponse = {
+  user: User,
+  session: Session
+}
+
 export async function getAuthenticatedUser() {
   // retrieve session which contains user data.
-  const response = await auth.api.getSession({
-    headers: {},
+  return await auth.api.getSession({
+    headers: await headers(), 
     query: {
       disableCookieCache: true
     },
     asResponse: false
+  }).then(response => {
+    if (response) {
+      const val: AuthenticationResponse = { 
+        session: response.session, 
+        user: response.user 
+      }
+      return val
+    }
+    else {
+      // return something else
+    }
+
   })
 
-  console.log(response);
-  return response;
+
+
 
 }

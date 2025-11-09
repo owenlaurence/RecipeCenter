@@ -7,7 +7,8 @@ import { Separator } from "@/app/components/ui/separator";
 import { ChefHat, X } from "lucide-react";
 import RegisterForm from "@/app/components/RegisterForm";
 import LoginForm from "@/app/components/LoginForm";
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from "react";
 
 export interface User {
   name?: string
@@ -23,14 +24,22 @@ export default function AuthPage() {
     router.back();
   };
 
+  const pathname = usePathname();
+
+
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       handleClose();
     }
   };
 
+  if(!pathname.includes("auth")) {
+    return null;
+  }
+
   return (
     <div 
+      key={pathname}
       className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200"
       onClick={handleBackdropClick}
     >

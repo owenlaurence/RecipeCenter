@@ -17,6 +17,7 @@ export async function addUser(user: User) {
             asResponse: false // returns a response object instead of data
         });
 
+        console.log(response.user)
 
         return response;
 
