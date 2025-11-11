@@ -2,7 +2,6 @@
 import { authClient } from "@/app/components/AuthClient";
 import { User } from "./page";
 import { auth } from "@/app/auth";
-import { cookies } from "next/headers";
 
 export async function addUser(user: User) {
     if (user.email && user.pass && user.name) {
@@ -14,10 +13,15 @@ export async function addUser(user: User) {
                 email: user.email,
                 password: user.pass
             },
-            asResponse: false // returns a response object instead of data
+            asResponse: true // returns a response object instead of data
         });
 
-        console.log(response.user)
+
+        if(response.ok) {
+            return await response.json()
+        }
+
+        console.log(response);
 
         return response;
 

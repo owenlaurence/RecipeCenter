@@ -45,12 +45,20 @@ export async function getAuthenticatedUser() {
         session: response.session, 
         user: response.user 
       }
+      console.log("VAL!!")
+      console.log(response)
       return val
     }
     else {
+      console.log("NO VAL")
       // return something else
     }
 
+  })
+  .catch(err => {
+    console.log("ERROR")
+    console.log(err)
+    return undefined;
   })
 
 

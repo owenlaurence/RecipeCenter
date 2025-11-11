@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Session, User } from 'better-auth';
 import { AuthenticationResponse } from '../actions';
 
@@ -23,6 +23,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children, initialSession }: AuthProviderProps) {
   const [session, setSession] = useState<Session | undefined>(initialSession?.session);
   const [user, setUser] = useState<User | undefined>(initialSession?.user);
+
 
   return (
     <AuthContext.Provider value={{
