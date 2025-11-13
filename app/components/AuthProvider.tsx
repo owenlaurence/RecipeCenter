@@ -24,6 +24,13 @@ export function AuthProvider({ children, initialSession }: AuthProviderProps) {
   const [session, setSession] = useState<Session | undefined>(initialSession?.session);
   const [user, setUser] = useState<User | undefined>(initialSession?.user);
 
+  useEffect(() => {
+    if(initialSession) {
+      setSession(initialSession.session);
+      setUser(initialSession.user);
+
+    }
+  }, [initialSession]);
 
   return (
     <AuthContext.Provider value={{

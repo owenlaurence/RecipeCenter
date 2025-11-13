@@ -33,7 +33,7 @@ export default function UserInfo() {
                 onMouseLeave={() => setIsOpen(false)}
               >
                 <Link 
-                  href="/profile" 
+                  href={`/profile/${user.id}`}
                   className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <User className="w-4 h-4" />
