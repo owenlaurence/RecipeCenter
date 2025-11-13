@@ -1,11 +1,12 @@
 "use client"
-import { FormEvent } from "react"
+import { FormEvent, useContext } from "react"
 import { addUser } from "../@modal/(.)auth/actions"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Button } from "./ui/button"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "./AuthProvider"
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -13,6 +14,8 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPass, setConfirmPass] = useState("")
+  
+  const { setSession, setUser } = useAuth();
   
 
   const handleRegister = (e : FormEvent<HTMLFormElement>) => {
@@ -28,7 +31,10 @@ export default function RegisterForm() {
     }).then((res) => {
       debugger;
       if(res && res.user) {
-        router.push("/")
+        setSession(res.session)
+        setUser(res.user)
+
+        router.back()
       }
     })
 

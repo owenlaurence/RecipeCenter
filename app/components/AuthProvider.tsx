@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Session, User } from 'better-auth';
-import { AuthenticationResponse } from '../actions';
+import { AuthenticationResponse, getAuthenticatedUser } from '../actions';
 
 
 interface AuthContextType {
