@@ -4,6 +4,7 @@ import { auth } from "./auth";
 import { Session, User } from "better-auth";
 import { headers } from "next/headers";
 
+
 export async function getSqlVersion() {
   const sql = neon(process.env.DATABASE_URL!);
   const response = await sql`SELECT version()`;
@@ -24,6 +25,7 @@ export async function queryRecipes(query: string, category: string) {
     return matchesQuery && matchesCategory;
   });
 }
+
 
 
 export type AuthenticationResponse = {

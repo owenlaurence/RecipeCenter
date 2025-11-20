@@ -1,9 +1,22 @@
 import { auth } from "@/app/auth";
 import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+
+import { session, user } from "@/drizzle/schema";
+import { db } from "@/app/db"
 
 
 export async function getUserById(id : string) {
-  const sql = neon(process.env.DATABASE_URL!);
-  const users = await sql`SELECT id FROM users`;
-  console.log(users);
+
+  const users = await db.select({
+    name: user.name,
+    email: user.email
+  }).from(user)
+
+
+  console.log(users)
+
+
+  // const users = await db.select().from()
+
 }
