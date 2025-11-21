@@ -1,20 +1,19 @@
 "use client";
 import { useState, useTransition, use, useEffect } from "react";
-import { queryRecipes } from "../actions";
+import { queryCategories, queryRecipes } from "../actions";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Search } from "lucide-react";
 import { Suspense } from "react";
 
 
-const categories = ["All", "Breakfast", "Lunch", "Dinner"];
 
 type RecipeListProps = {
-  recipes : Recipe[] | null
+  recipes: Recipe[] | null
 }
 
 // This will suspend
-function RecipeList(props : RecipeListProps) {
+function RecipeList(props: RecipeListProps) {
 
   const recipes = props.recipes;
 
@@ -29,7 +28,7 @@ function RecipeList(props : RecipeListProps) {
           key={r.id}
           className="border bg-white rounded-md shadow-sm p-4 hover:shadow-md transition"
         >
-          <img src={r.imgUrl} alt={"bad"}/>
+          <img src={r.imgUrl} alt={"bad"} />
           <h3 className="text-lg font-semibold mb-2">{r.title}</h3>
           <p className="text-sm text-gray-600">{r.description}</p>
         </div>
@@ -67,14 +66,19 @@ export type Recipe = {
 export function RecipeExplorer() {
   const [recipes, setRecipes] = useState<Recipe[] | null>(null);
   const [category, setCategory] = useState("All");
+  const [categories, setCategories] = useState<string[] | undefined>()
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition()
 
+
   useEffect(() => {
-     startTransition(async () => {
+    //  
+    startTransition(async () => {
       const recipes = await queryRecipes("", "All")
       setRecipes(recipes);
-     })
+      const categories = await queryCategories();
+      setCategories(categories)
+    })
   }, []);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
@@ -85,12 +89,12 @@ export function RecipeExplorer() {
       setRecipes(recipes);
 
     })
-    
+
   }
 
   function handleCategoryChange(newCategory: string) {
     setCategory(newCategory);
-    
+
     startTransition(async () => {
       const recipes = await queryRecipes(searchTerm, newCategory);
       setRecipes(recipes);
@@ -110,21 +114,33 @@ export function RecipeExplorer() {
         />
       </div>
 
-      {/* Categories */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {categories.map((cat) => (
-          <Button
-            key={cat}
-            variant={cat === category ? "default" : "outline"}
-            onClick={() => handleCategoryChange(cat)}
-          >
-            {cat}
-          </Button>
-        ))}
-      </div>
 
       {isPending ? <RecipeSkeleton />
-        : <RecipeList recipes={recipes} />
+        : <>
+          {/* Categories */}
+          <div className="flex flex-wrap gap-2 mb-8">
+              {/* Reset category */}
+              <Button
+                key={"all"}
+                variant={"All" === category ? "default" : "outline"}
+                onClick={() => handleCategoryChange("All")}
+              >
+                {"All"}
+              </Button>
+            {/* All db categories */}
+            {categories?.map((cat) => (
+              <Button
+                key={cat}
+                variant={cat === category ? "default" : "outline"}
+                onClick={() => handleCategoryChange(cat)}
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+
+          <RecipeList recipes={recipes} />
+        </>
 
       }
 
