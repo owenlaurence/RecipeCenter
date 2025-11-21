@@ -1,4 +1,3 @@
-// components/RecipeExplorer.tsx
 "use client";
 import { useState, useTransition, use, useEffect } from "react";
 import { queryRecipes } from "../actions";
@@ -7,18 +6,17 @@ import { Button } from "./ui/button";
 import { Search } from "lucide-react";
 import { Suspense } from "react";
 
-interface Recipe {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-}
 
 const categories = ["All", "Breakfast", "Lunch", "Dinner"];
 
-// Recipe List Component - this will be suspended
-function RecipeList({ recipesPromise }: { recipesPromise: Promise<Recipe[]> }) {
-  const recipes = use(recipesPromise);
+type RecipeListProps = {
+  recipes : Recipe[] | null
+}
+
+// This will suspend
+function RecipeList(props : RecipeListProps) {
+
+  const recipes = props.recipes;
 
   if (!recipes || recipes.length === 0) {
     return <p className="text-gray-500 text-center">No recipes found.</p>;
@@ -31,6 +29,7 @@ function RecipeList({ recipesPromise }: { recipesPromise: Promise<Recipe[]> }) {
           key={r.id}
           className="border bg-white rounded-md shadow-sm p-4 hover:shadow-md transition"
         >
+          <img src={r.imgUrl} alt={"bad"}/>
           <h3 className="text-lg font-semibold mb-2">{r.title}</h3>
           <p className="text-sm text-gray-600">{r.description}</p>
         </div>
@@ -39,7 +38,7 @@ function RecipeList({ recipesPromise }: { recipesPromise: Promise<Recipe[]> }) {
   );
 }
 
-// Loading skeleton component
+// rendered before client components load.
 function RecipeSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -56,31 +55,45 @@ function RecipeSkeleton() {
   );
 }
 
+export type Recipe = {
+  id: string;
+  title: string;
+  description: string;
+  imgUrl: string;
+  category: string;
+  userId: string | null;
+}
+
 export function RecipeExplorer() {
-  const [recipesPromise, setRecipesPromise] = useState<Promise<Recipe[]> | null>(null);
+  const [recipes, setRecipes] = useState<Recipe[] | null>(null);
   const [category, setCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition()
 
-  // Initialize the recipes promise after mount
   useEffect(() => {
-    setRecipesPromise(queryRecipes("", "All"));
+     startTransition(async () => {
+      const recipes = await queryRecipes("", "All")
+      setRecipes(recipes);
+     })
   }, []);
 
   function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     setSearchTerm(value);
+    startTransition(async () => {
+      const recipes = await queryRecipes(value, category);
+      setRecipes(recipes);
+
+    })
     
-    startTransition(() => {
-      setRecipesPromise(queryRecipes(value, category));
-    });
   }
 
   function handleCategoryChange(newCategory: string) {
     setCategory(newCategory);
     
-    startTransition(() => {
-      setRecipesPromise(queryRecipes(searchTerm, newCategory));
+    startTransition(async () => {
+      const recipes = await queryRecipes(searchTerm, newCategory);
+      setRecipes(recipes);
     });
   }
 
@@ -110,19 +123,12 @@ export function RecipeExplorer() {
         ))}
       </div>
 
-      {/* Loading State */}
-      {isPending && (
-        <p className="text-gray-400 text-sm mb-4">Loading recipes...</p>
-      )}
+      {isPending ? <RecipeSkeleton />
+        : <RecipeList recipes={recipes} />
 
-      {/* Suspense Boundary */}
-      {recipesPromise ? (
-        <Suspense key={recipesPromise.toString()} fallback={<RecipeSkeleton />}>
-          <RecipeList recipesPromise={recipesPromise} />
-        </Suspense>
-      ) : (
-        <RecipeSkeleton />
-      )}
+      }
+
+
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default async function Page({
   const { id } = await params
 
   
-  getUserById("");
+  // getUserById("");
   
 
   return <div>

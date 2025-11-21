@@ -1,4 +1,4 @@
-import { getSqlVersion, queryRecipes } from "./actions";
+import { queryRecipes } from "./actions";
 import { RecipeExplorer } from "./components/RecipeExplorer";
 import { ChefHat, Plus } from "lucide-react";
 import { Button } from "./components/ui/button";

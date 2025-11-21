@@ -1,6 +1,5 @@
-import { pgTable, unique, text, boolean, timestamp, foreignKey } from "drizzle-orm/pg-core"
-import { sql } from "drizzle-orm"
-
+import { pgTable, unique, text, boolean, timestamp, foreignKey, numeric } from "drizzle-orm/pg-core"
+import { relations, sql } from "drizzle-orm"
 
 
 export const user = pgTable("user", {
@@ -15,6 +14,35 @@ export const user = pgTable("user", {
 	unique("user_email_key").on(table.email),
 ]);
 
+
+export const userRelations = relations(user, ({ many  }) => ({
+	recipes: many(recipe)
+}));
+
+export const recipe = pgTable("recipe", {
+	id: text().primaryKey().notNull(),
+	title: text().notNull(),
+	description: text().notNull(),
+	imgUrl: text().notNull(),
+	category: text().notNull(),
+	userId: text()
+})
+
+export const recipeRelations = relations(recipe, ({ many  }) => ({
+	ingredients: many(ingredient),
+}));
+
+export const ingredient = pgTable("ingredient", {
+	id: text().primaryKey().notNull(),
+	name: text().notNull(),
+	quantity: numeric().notNull(),
+	unit: text().notNull()
+})
+
+
+/* ****************** */
+/* better auth tables */
+/* ****************** */
 export const session = pgTable("session", {
 	id: text().primaryKey().notNull(),
 	expiresAt: timestamp({ withTimezone: true, mode: 'string' }).notNull(),

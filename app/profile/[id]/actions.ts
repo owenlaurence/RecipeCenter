@@ -2,19 +2,18 @@ import { auth } from "@/app/auth";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/postgres-js";
 
-import { session, user } from "@/drizzle/schema";
+import { ingredient, recipe, recipeRelations, session, user } from "@/drizzle/schema";
 import { db } from "@/app/db"
+import { eq } from "drizzle-orm";
 
 
 export async function getUserById(id : string) {
 
-  const users = await db.select({
-    name: user.name,
-    email: user.email
-  }).from(user)
+  const foundUser = await db.select().from(user).where(eq(user.id, id))
 
 
-  console.log(users)
+  console.log(foundUser)
+  return foundUser
 
 
   // const users = await db.select().from()
