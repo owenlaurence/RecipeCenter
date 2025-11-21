@@ -1,0 +1,1 @@
+ALTER TABLE "recipe" ALTER COLUMN "prepTime" SET DATA TYPE text;

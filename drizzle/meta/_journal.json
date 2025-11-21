@@ -22,6 +22,27 @@
       "when": 1763614255316,
       "tag": "0002_wealthy_mojo",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763765818228,
+      "tag": "0003_jazzy_mongu",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763767983895,
+      "tag": "0004_little_landau",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1763768080208,
+      "tag": "0005_high_proemial_gods",
+      "breakpoints": true
     }
   ]
 }

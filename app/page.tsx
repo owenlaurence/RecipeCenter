@@ -1,4 +1,4 @@
-import { queryRecipes } from "./actions";
+import {  queryRecipes } from "./actions";
 import { RecipeExplorer } from "./components/RecipeExplorer";
 import { ChefHat, Plus } from "lucide-react";
 import { Button } from "./components/ui/button";
@@ -7,6 +7,9 @@ import UserInfo from "./components/UserInfo";
 import { Suspense } from "react";
 
 export default async function Page() {
+
+  // await importData();
+
 
   return (
     <div className="min-h-screen bg-gray-50">

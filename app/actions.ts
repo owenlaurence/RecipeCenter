@@ -4,8 +4,9 @@ import { auth } from "./auth";
 import { Session, User } from "better-auth";
 import { headers } from "next/headers";
 import { db } from "./db";
-import { recipe } from "@/drizzle/schema";
+import { ingredient, recipe, user } from "@/drizzle/schema";
 import { and, eq, ilike, like, or, sql } from "drizzle-orm";
+import { count } from "console";
 
 
 
@@ -15,7 +16,6 @@ export async function queryRecipes(query: string, category: string) {
   const recipes = await db
     .select()
     .from(recipe)
-    // .where((like(recipe.title, query) || like(recipe.description, query)) && eq(recipe.category, category))
     .where(
       and(
         or(
@@ -40,6 +40,24 @@ export async function queryCategories() {
   console.log(val);
   return val;
 }
+
+
+
+export async function queryRecipeById( id : string) {
+  const foundRecipe = await db
+    .select()
+    .from(recipe)
+    .where(eq(recipe.id, id))
+  console.log(foundRecipe);
+
+  const ingredients = await db 
+    .select()
+    .from(ingredient)
+    .where(eq(ingredient.recipeId, id))
+
+  return { recipe: foundRecipe[0], ingredients: ingredients};
+}
+
 
 export type AuthenticationResponse = {
   user: User,
@@ -74,7 +92,27 @@ export async function getAuthenticatedUser() {
       return undefined;
     })
 
+}
 
 
 
+export async function getUserById(id : string) {
+  const userName = await db
+    .select({
+      name: user.name
+    })
+    .from(user)
+    .where(eq(user.id, id))
+
+  const userNameQuery = await db
+    .select({
+      name: user.name
+    })
+    .from(user)
+    .where(eq(user.id, id)).toSQL()
+
+    console.log("QUERY!!");
+    console.log(userNameQuery);
+
+    return userName[0].name;
 }

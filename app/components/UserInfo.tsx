@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { Button } from "./ui/button"
-import { Plus, User, Settings, LogOut, ChevronDown } from "lucide-react"
+import { Plus, User, Home, Settings, LogOut, ChevronDown } from "lucide-react"
 import Link from "next/link";
 
 export default function UserInfo() {
@@ -32,6 +32,13 @@ export default function UserInfo() {
                 onMouseEnter={() => setIsOpen(true)}
                 onMouseLeave={() => setIsOpen(false)}
               >
+                <Link 
+                  href={`/`}
+                  className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Home className="w-4 h-4" />
+                  <span>Home</span>
+                </Link>
                 <Link 
                   href={`/profile/${user.id}`}
                   className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"

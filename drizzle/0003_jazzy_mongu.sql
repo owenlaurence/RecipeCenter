@@ -1,0 +1,1 @@
+ALTER TABLE "ingredient" ADD COLUMN "recipeId" text NOT NULL;

@@ -1,4 +1,4 @@
-import { pgTable, unique, text, boolean, timestamp, foreignKey, numeric } from "drizzle-orm/pg-core"
+import { pgTable, unique, text, boolean, timestamp, foreignKey, numeric, real } from "drizzle-orm/pg-core"
 import { relations, sql } from "drizzle-orm"
 
 
@@ -24,19 +24,19 @@ export const recipe = pgTable("recipe", {
 	title: text().notNull(),
 	description: text().notNull(),
 	imgUrl: text().notNull(),
+	prepTime: text().notNull(),
+	servings: numeric().notNull(),
 	category: text().notNull(),
 	userId: text()
 })
 
-export const recipeRelations = relations(recipe, ({ many  }) => ({
-	ingredients: many(ingredient),
-}));
 
 export const ingredient = pgTable("ingredient", {
 	id: text().primaryKey().notNull(),
 	name: text().notNull(),
-	quantity: numeric().notNull(),
-	unit: text().notNull()
+	quantity: real().notNull(),
+	unit: text().notNull(),
+	recipeId : text().notNull()
 })
 
 

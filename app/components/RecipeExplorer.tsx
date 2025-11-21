@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Search } from "lucide-react";
 import { Suspense } from "react";
+import { useRouter } from "next/navigation";
 
 
 
@@ -17,15 +18,24 @@ function RecipeList(props: RecipeListProps) {
 
   const recipes = props.recipes;
 
+  const router = useRouter();
+
   if (!recipes || recipes.length === 0) {
     return <p className="text-gray-500 text-center">No recipes found.</p>;
   }
 
+  const openRecipe = (id : string) => {
+    router.push(`/recipe/${id}`);
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div 
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
       {recipes.map((r) => (
         <div
           key={r.id}
+          onClick={() => openRecipe(r.id)}
           className="border bg-white rounded-md shadow-sm p-4 hover:shadow-md transition"
         >
           <img src={r.imgUrl} alt={"bad"} />
@@ -59,8 +69,19 @@ export type Recipe = {
   title: string;
   description: string;
   imgUrl: string;
+  prepTime: string;
+  servings: string;
   category: string;
   userId: string | null;
+  ingredients? : Ingredient[]
+}
+
+export type Ingredient = {
+  id : string;
+  name : string;
+  quantity : number;
+  unit : string;
+  recipeId : string;
 }
 
 export function RecipeExplorer() {
