@@ -1,4 +1,4 @@
-import {  queryRecipes } from "./actions";
+import { queryRecipes } from "./actions";
 import { RecipeExplorer } from "./components/RecipeExplorer";
 import { ChefHat, Plus } from "lucide-react";
 import { Button } from "./components/ui/button";
@@ -20,15 +20,17 @@ export default async function Page() {
             <ChefHat className="w-8 h-8 text-orange-500" />
             <h1 className="text-xl font-semibold">RecipeShare</h1>
           </div>
-          <UserInfo/>
+          <UserInfo />
         </div>
       </header>
 
       {/* Search + Grid (client-side dynamic) */}
       <main className="container mx-auto px-4 py-8">
-        <Suspense fallback={<p>Loading...</p>}>
-          <RecipeExplorer/>
-        </Suspense>
+        <div className="flex items-center justify-between mb-6">
+          <Suspense fallback={<p>Loading...</p>}>
+            <RecipeExplorer />
+          </Suspense>
+        </div>
       </main>
     </div>
   );

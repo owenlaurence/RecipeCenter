@@ -3,10 +3,12 @@ import { useState, useTransition, use, useEffect } from "react";
 import { queryCategories, queryRecipes } from "../actions";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Badge, Clock, Search, Users } from "lucide-react";
+import { Badge, Clock, Search, SlidersHorizontal, Users } from "lucide-react";
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardFooter } from "./ui/card";
+import { FilterPanel, FilterState } from "./FilterPanel";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 
 
 
@@ -21,28 +23,29 @@ function RecipeList(props: RecipeListProps) {
 
   const router = useRouter();
 
+
   if (!recipes || recipes.length === 0) {
     return <p className="text-gray-500 text-center">No recipes found.</p>;
   }
 
-  const openRecipe = (id : string) => {
+  const openRecipe = (id: string) => {
     router.push(`/recipe/${id}`);
   }
 
   return (
-    <div 
-    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    <div
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
       {recipes.map((r) => (
-        <RecipeCard recipe={r} onClick={openRecipe}/>
+        <RecipeCard key={r.id} recipe={r} onClick={openRecipe} />
       ))}
     </div>
   );
 }
 
 interface RecipeCardProps {
-  recipe : Recipe
-  onClick: (id : string) => void;
+  recipe: Recipe
+  onClick: (id: string) => void;
 }
 
 function RecipeCard({
@@ -111,15 +114,15 @@ export type Recipe = {
   servings: string;
   category: string;
   userId: string | null;
-  ingredients? : Ingredient[]
+  ingredients?: Ingredient[]
 }
 
 export type Ingredient = {
-  id : string;
-  name : string;
-  quantity : number;
-  unit : string;
-  recipeId : string;
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  recipeId: string;
 }
 
 export function RecipeExplorer() {
@@ -128,6 +131,66 @@ export function RecipeExplorer() {
   const [categories, setCategories] = useState<string[] | undefined>()
   const [searchTerm, setSearchTerm] = useState("");
   const [isPending, startTransition] = useTransition()
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+
+  const [filters, setFilters] = useState<FilterState>({
+    categories: [],
+    prepTimeRange: [0, 120],
+    servingsRange: [1, 12],
+    sortBy: "newest",
+  });
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+
+  const filteredRecipes = recipes?.filter((recipe) => {
+    // Search filter
+    const matchesSearch = recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Category filter (using both tab and advanced filter)
+    const tabCategory = category === "All" || recipe.category === category;
+    const advancedCategories = filters.categories.length === 0 || filters.categories.includes(recipe.category);
+
+    // Prep time filter
+    const matchesPrepTime = Number.parseInt(recipe.prepTime.split(" ")[0]) >= filters.prepTimeRange[0] &&
+      Number.parseInt(recipe.prepTime.split(" ")[0]) <= filters.prepTimeRange[1];
+
+    // Servings filter
+    const matchesServings = Number.parseInt(recipe.servings) >= filters.servingsRange[0] &&
+      Number.parseInt(recipe.servings) <= filters.servingsRange[1];
+
+    return matchesSearch && tabCategory && advancedCategories && matchesPrepTime && matchesServings;
+  })
+    .sort((a, b) => {
+      switch (filters.sortBy) {
+        case "oldest":
+          return recipes.indexOf(a) - recipes.indexOf(b);
+        case "prepTime-asc":
+          return Number.parseInt(a.prepTime) - Number.parseInt(b.prepTime);
+        case "prepTime-desc":
+          return Number.parseInt(b.prepTime) - Number.parseInt(a.prepTime);
+        case "servings-asc":
+          return Number.parseInt(a.servings) - Number.parseInt(b.servings);
+        case "servings-desc":
+          return Number.parseInt(b.servings) - Number.parseInt(a.servings);
+        case "newest":
+        default:
+          return recipes.indexOf(b) - recipes.indexOf(a);
+      }
+    });
 
 
   useEffect(() => {
@@ -162,47 +225,68 @@ export function RecipeExplorer() {
 
   return (
     <div>
+
+
+
+      {isPending ? <RecipeSkeleton />
+        : <>
+          {/* Mobile Filter Button */}
+      <div className="flex items-center justify-between mb-6">
+
+          <Sheet open={showMobileFilters} onOpenChange={setShowMobileFilters}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="lg:hidden ml-2">
+                <SlidersHorizontal className="w-4 h-4" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80">
+              <SheetHeader>
+                <SheetTitle>Filters</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6">
+                <FilterPanel
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  availableCategories={categories!}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
       {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
         <Input
           type="text"
           placeholder="Search recipes..."
           onChange={handleSearch}
           className="pl-10"
         />
-      </div>
+        </div>
 
+        <div className="flex gap-6">
+          {/* Desktop Filter Sidebar */}
+          <aside className={`${windowWidth < 1020 ? "hidden" : ""} lg:block w-64 flex-shrink-0`}>
+            <FilterPanel
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableCategories={categories!}
+            />
+          </aside>
 
-      {isPending ? <RecipeSkeleton />
-        : <>
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-8">
-              {/* Reset category */}
-              <Button
-                key={"all"}
-                variant={"All" === category ? "default" : "outline"}
-                onClick={() => handleCategoryChange("All")}
-              >
-                {"All"}
-              </Button>
-            {/* All db categories */}
-            {categories?.map((cat) => (
-              <Button
-                key={cat}
-                variant={cat === category ? "default" : "outline"}
-                onClick={() => handleCategoryChange(cat)}
-              >
-                {cat}
-              </Button>
-            ))}
+          {/* Recipe Grid */}
+          <div className="flex-1">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-gray-600">
+                Showing {filteredRecipes?.length} {filteredRecipes?.length === 1 ? 'recipe' : 'recipes'}
+              </p>
+            </div>
+
+              <RecipeList recipes={recipes} />
           </div>
-
-          <RecipeList recipes={recipes} />
+        </div>
+ 
         </>
 
       }
-
 
     </div>
   );
