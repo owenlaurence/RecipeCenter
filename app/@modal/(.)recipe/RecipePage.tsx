@@ -40,7 +40,7 @@ export function RecipeDetail({ recipe, ingredients, userName }: RecipeDetailProp
               <Badge>{recipe.category}</Badge>
               <div className="flex items-center gap-1 text-gray-600">
                 <Clock className="w-4 h-4" />
-                <span>{recipe.prepTime} minutes</span>
+                <span>{recipe.prepTime}</span>
               </div>
               <div className="flex items-center gap-1 text-gray-600">
                 <Users className="w-4 h-4" />

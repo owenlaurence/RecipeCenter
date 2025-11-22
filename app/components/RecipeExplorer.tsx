@@ -3,9 +3,10 @@ import { useState, useTransition, use, useEffect } from "react";
 import { queryCategories, queryRecipes } from "../actions";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Search } from "lucide-react";
+import { Badge, Clock, Search, Users } from "lucide-react";
 import { Suspense } from "react";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardFooter } from "./ui/card";
 
 
 
@@ -33,19 +34,56 @@ function RecipeList(props: RecipeListProps) {
     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
     >
       {recipes.map((r) => (
-        <div
-          key={r.id}
-          onClick={() => openRecipe(r.id)}
-          className="border bg-white rounded-md shadow-sm p-4 hover:shadow-md transition"
-        >
-          <img src={r.imgUrl} alt={"bad"} />
-          <h3 className="text-lg font-semibold mb-2">{r.title}</h3>
-          <p className="text-sm text-gray-600">{r.description}</p>
-        </div>
+        <RecipeCard recipe={r} onClick={openRecipe}/>
       ))}
     </div>
   );
 }
+
+interface RecipeCardProps {
+  recipe : Recipe
+  onClick: (id : string) => void;
+}
+
+function RecipeCard({
+  recipe,
+  onClick,
+}: RecipeCardProps) {
+  return (
+    <Card
+      className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => onClick(recipe.id)}
+    >
+      <div className="aspect-video relative overflow-hidden">
+        <img
+          src={recipe.imgUrl}
+          alt={recipe.title}
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+        />
+        <Badge className="absolute top-3 right-3">{recipe.category}</Badge>
+      </div>
+      <CardContent className="p-4">
+        <h3 className="mb-2">{recipe.title}</h3>
+        <p className="text-gray-600 line-clamp-2">{recipe.description}</p>
+      </CardContent>
+      <CardFooter className="p-4 pt-0 flex items-center justify-between text-gray-500">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            <span className="text-sm">{recipe.prepTime} min</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Users className="w-4 h-4" />
+            <span className="text-sm">{recipe.servings}</span>
+          </div>
+        </div>
+        {/* <span className="text-sm">by {author}</span> */}
+      </CardFooter>
+    </Card>
+  );
+}
+
+
 
 // rendered before client components load.
 function RecipeSkeleton() {
