@@ -5,6 +5,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { AuthProvider } from "./components/AuthProvider";
 import { AuthenticationResponse, getAuthenticatedUser } from "./actions";
+import { Analytics } from '@vercel/analytics/next'
 
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <Analytics/>
       <SpeedInsights />
       <body>
         <AuthProvider initialSession={session}>
